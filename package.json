@@ -1,7 +1,9 @@
 {
-  "name": "bubble-sort",
+  "name": "bubble-sort-game",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "Kevin Sandow",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",

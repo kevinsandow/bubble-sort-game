@@ -98,11 +98,10 @@ function App() {
 
   return (
     <>
-      <h1>Bubble Sort</h1>
       <div
         style={{
           display: "flex",
-          gap: "3em",
+          gap: "1em",
           flexWrap: "wrap",
           paddingBottom: "2em",
         }}

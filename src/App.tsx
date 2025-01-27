@@ -1,35 +1,124 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Tube } from "./Tube.tsx";
+import { useState } from "react";
+
+const allBubbles = [
+  0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6,
+  6, 6, 7, 7, 7, 7,
+];
+
+function getRandomConfiguration() {
+  const bubbles = [...allBubbles];
+  const result: number[][] = new Array(10).fill(0).map(() => []);
+
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 4; j++) {
+      const randomIndex = Math.floor(Math.random() * bubbles.length);
+      result[i].push(bubbles[randomIndex]);
+      bubbles.splice(randomIndex, 1);
+    }
+  }
+
+  return result;
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState<{
+    activeTube: number | undefined;
+    tubes: number[][];
+  }>(() => ({
+    activeTube: undefined,
+    tubes: getRandomConfiguration(),
+  }));
+
+  const reset = () =>
+    setGameState({
+      activeTube: undefined,
+      tubes: getRandomConfiguration(),
+    });
+
+  const onClick = (tube: number) => {
+    setGameState((state) => {
+      if (state.activeTube === undefined) {
+        console.log(1);
+        return { ...state, activeTube: tube };
+      }
+
+      if (state.activeTube === tube) {
+        console.log(2);
+        return { ...state, activeTube: undefined };
+      }
+
+      if (state.activeTube === undefined && state.tubes[tube].length === 0) {
+        console.log(3);
+        return state;
+      }
+
+      if (state.tubes[tube].length === 4) {
+        console.log(4);
+        return { ...state, activeTube: tube };
+      }
+
+      if (state.activeTube !== undefined && state.tubes[tube].length === 4) {
+        console.log(5);
+        return state;
+      }
+
+      const tubes = state.tubes.map((x) => [...x]);
+      if (state.activeTube !== undefined && state.tubes[tube].length === 0) {
+        tubes[tube].push(tubes[state.activeTube].pop()!);
+        console.log(6);
+        return {
+          activeTube: undefined,
+          tubes,
+        };
+      }
+
+      console.log(
+        state.activeTube,
+        state.tubes[state.activeTube].slice(-1)[0],
+        state.tubes[tube].slice(-1)[0],
+      );
+      if (
+        state.activeTube !== undefined &&
+        state.tubes[state.activeTube].slice(-1)[0] ===
+          state.tubes[tube].slice(-1)[0]
+      ) {
+        tubes[tube].push(tubes[state.activeTube].pop()!);
+        console.log(7);
+        return {
+          activeTube: undefined,
+          tubes,
+        };
+      }
+
+      console.log(8);
+      return state;
+    });
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <h1>Bubble Sort</h1>
+      <div
+        style={{
+          display: "flex",
+          gap: "3em",
+          flexWrap: "wrap",
+          paddingBottom: "2em",
+        }}
+      >
+        {gameState.tubes.map((tube, index) => (
+          <Tube
+            key={`tube-${index}-${tube.join("-")}`}
+            isActive={index === gameState.activeTube}
+            tube={tube}
+            onClick={() => onClick(index)}
+          />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <button onClick={reset}>Reset</button>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

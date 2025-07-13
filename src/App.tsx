@@ -38,60 +38,47 @@ function App() {
 
   const onClick = (tube: number) => {
     setGameState((state) => {
+      if (state.activeTube === undefined && state.tubes[tube].length === 0) {
+        return state;
+      }
+
       if (state.activeTube === undefined) {
-        console.log(1);
         return { ...state, activeTube: tube };
       }
 
       if (state.activeTube === tube) {
-        console.log(2);
         return { ...state, activeTube: undefined };
       }
 
-      if (state.activeTube === undefined && state.tubes[tube].length === 0) {
-        console.log(3);
-        return state;
-      }
-
       if (state.tubes[tube].length === 4) {
-        console.log(4);
         return { ...state, activeTube: tube };
       }
 
       if (state.activeTube !== undefined && state.tubes[tube].length === 4) {
-        console.log(5);
         return state;
       }
 
       const tubes = state.tubes.map((x) => [...x]);
       if (state.activeTube !== undefined && state.tubes[tube].length === 0) {
         tubes[tube].push(tubes[state.activeTube].pop()!);
-        console.log(6);
         return {
           activeTube: undefined,
           tubes,
         };
       }
 
-      console.log(
-        state.activeTube,
-        state.tubes[state.activeTube].slice(-1)[0],
-        state.tubes[tube].slice(-1)[0],
-      );
       if (
         state.activeTube !== undefined &&
         state.tubes[state.activeTube].slice(-1)[0] ===
           state.tubes[tube].slice(-1)[0]
       ) {
         tubes[tube].push(tubes[state.activeTube].pop()!);
-        console.log(7);
         return {
           activeTube: undefined,
           tubes,
         };
       }
 
-      console.log(8);
       return state;
     });
   };
@@ -115,6 +102,7 @@ function App() {
           />
         ))}
       </div>
+      <pre>{JSON.stringify(gameState, null, 2)}</pre>
       <button onClick={reset}>Reset</button>
     </>
   );

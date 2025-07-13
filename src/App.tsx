@@ -102,7 +102,6 @@ function App() {
           />
         ))}
       </div>
-      <pre>{JSON.stringify(gameState, null, 2)}</pre>
       <button onClick={reset}>Reset</button>
     </>
   );
